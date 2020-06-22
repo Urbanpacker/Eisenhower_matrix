@@ -1,5 +1,3 @@
-import {Util} from "./utilities.js";
-
 class Task{
     constructor({id, name, type, description, isArchived}){
         this.setId(id);
@@ -88,5 +86,3 @@ class Task{
     }
 
 }
-
-export {Task} ;

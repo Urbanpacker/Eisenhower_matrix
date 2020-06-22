@@ -1,9 +1,5 @@
 "use strict";
 
-import {Util} from "./utilities.js";
-import {Task} from "./task.js";
-import {DndHandler} from "./dndHandler.js";
-
 /*********************DATA *************************/
 
 /**** Task list sections ****/

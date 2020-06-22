@@ -40,5 +40,3 @@ const DndHandler = {
         });
     }
 }
-
-export {DndHandler} ;
