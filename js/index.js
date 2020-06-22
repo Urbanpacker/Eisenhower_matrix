@@ -69,8 +69,7 @@ const recordTask = () => {
         id : id,
         name : taskName.value,
         type : taskType.value,
-        description : taskDescription.value,
-        isArchived : false,
+        description : taskDescription.value
     };
 
     let newTask = new Task(formData);
