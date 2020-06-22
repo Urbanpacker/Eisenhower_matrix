@@ -1,10 +1,9 @@
 class Task{
-    constructor({id, name, type, description, isArchived}){
+    constructor({id, name, type, description}){
         this.setId(id);
         this.setName(name);
         this.setType(type);
         this.setDescription(description);
-        this.setArchiveStatut(isArchived);
         this.deleteButton = null;
     }
     
@@ -23,13 +22,6 @@ class Task{
     setDescription(description){
         this.description = description ;
     }
-    setArchiveStatut(value){
-        this.isArchived = value ;
-    }
-
-    removeFromArchiveTasks(){
-        this.isArchived = false ;
-    }
 
     setDeletionButton(storedTasksCopy, deletionCallback){
         this.deleteButton.addEventListener("click", (e)=> {
@@ -37,7 +29,7 @@ class Task{
             let currentTarget = e.currentTarget ;
             // Update the taskListCopy removing the current task
             for(let task of storedTasksCopy){            
-                if(currentTarget.dataset.taskId == task.id){ 
+                if(currentTarget.dataset.taskId.toString() === task.id.toString()){ 
                     for(let i = 0 ; i < storedTasksCopy.length ; i++){
                         // Remove the task from the array which is stored in the browser local storage
                         if(storedTasksCopy[i].id == task.id){
@@ -48,15 +40,14 @@ class Task{
             }
             // Remove from the DOM tree the task which corresponds to the deletion button that has been clicked
             Util.removeElementFromDOM([currentTarget.parentNode]);
-                    
             deletionCallback(currentTarget);
         });
     }
 
     renderElement(){
         let task = document.createElement("div");
+        task.id = "TaskNumber" +this.id;
         task.dataset.id = this.id;
-        task.setAttribute("draggable", "true");
         task.dataset.type = this.type ;
         task.classList.add("section__singleTask");
 
@@ -70,7 +61,8 @@ class Task{
 
         const deleteButton = document.createElement("a");
         const deleteButtonImg = document.createElement("img");
-        deleteButtonImg.setAttribute("src", "https://freesvg.org/img/TzeenieWheenie_red_green_OK_not_OK_Icons_1.png")
+        deleteButtonImg.setAttribute("src", "./images/deleteButton.png");
+        deleteButtonImg.dataset.credits = "This image is published under the Creative Commons Public Domain 1.0, the original image can be found on the website Free SVG : https://freesvg.org/img/TzeenieWheenie_red_green_OK_not_OK_Icons_1.png . Many thanks to them." ;
         deleteButtonImg.setAttribute("alt", "Supprimer cette tâche");
         deleteButton.appendChild(deleteButtonImg);
         deleteButton.setAttribute("href", "#");

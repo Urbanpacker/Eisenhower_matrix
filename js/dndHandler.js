@@ -1,27 +1,27 @@
-const DndHandler = {
+class DndHandler {
     
-    dragged : null,
-    
-    setListeners(elemToDrags, destinations, callback){
+    static setListeners(elemToDrags, destinations, callback){
         for(let elemToDrag of elemToDrags){
-            this.applyDragEvents(elemToDrag);
+            DndHandler.applyDragEvents(elemToDrag);
         }
     
         for(let destination of destinations){
-            this.applyDropEvents(destination, callback);
+            DndHandler.applyDropEvents(destination, callback);
         }
-    },
+    }
 
-    applyDragEvents(elemToDrag) {
+    static applyDragEvents(elemToDrag) {
         elemToDrag.setAttribute("draggable", "true");
         elemToDrag.addEventListener("dragstart", (e) => {
-            this.dragged = e.currentTarget ;
-            e.dataTransfer.setData("text/plain", "");
+            e.dataTransfer.effectAllowed = "move";
+            e.dataTransfer.setData("text", e.target.getAttribute("id"));
         });
-    },
-    applyDropEvents(destination, callback) {
+    }
+    
+    static applyDropEvents(destination, callback) {
         destination.addEventListener("dragover", (e)=>{
             e.preventDefault();
+            e.dataTransfer.dropEffect = "move";
             e.currentTarget.classList.add("dragovered");
         });
         destination.addEventListener("dragleave", (e)=>{
@@ -30,13 +30,15 @@ const DndHandler = {
         });
 
         destination.addEventListener("drop", (e)=>{
+            e.preventDefault();
             e.currentTarget.classList.remove("dragovered");
-            let target = e.currentTarget,
-            draggedElement = this.dragged;
+            let target = e.currentTarget ;
+            let data = e.dataTransfer.getData("text");
+            let draggedElement = document.getElementById(data) ;
             let clonedElement = draggedElement.parentNode.removeChild(draggedElement);
             let setclonedElement = target.appendChild(clonedElement);
             this.applyDragEvents(setclonedElement);
-            callback(e.currentTarget, this.dragged);
+            callback(e.currentTarget, draggedElement);
         });
     }
 }
