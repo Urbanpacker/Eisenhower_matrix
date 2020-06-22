@@ -17,7 +17,7 @@ const sections = [important_urgent, non_important_urgent, important_non_urgent, 
 const storedTasksCopy = Util.loadDataFromDomStorage("taskList", "local") || [];
 
 /*** Form fields ****/
-const newTaskForm = document.getElementById("newTaskForm");
+const taskForm = document.getElementById("taskForm");
 const taskName = document.getElementById("taskNameInput");
 const taskType = document.getElementById("taskTypeInput");
 const taskDescription = document.getElementById("taskDescriptionInput");
@@ -43,7 +43,7 @@ const prepareDragAndDrop = async ()=>{
     const droppingCallback = (destination, draggedElem)=>{
         if(draggedElem.dataset.type != destination.dataset.type){
             for(let storedTask of storedTasksCopy){
-                let storedTaskId  = storedTask.id.toString()
+                let storedTaskId = storedTask.id.toString() ;
                 if(storedTaskId === draggedElem.dataset.id){
                     storedTask.type = destination.dataset.type ;
                     updateStoredTasksCopy();
@@ -56,16 +56,59 @@ const prepareDragAndDrop = async ()=>{
     DndHandler.setListeners(displayedTasks, destinationSections, droppingCallback);
 };
 
-const recordTask = () => {
-       // The id is created by incrementing the id number of the last item of the stored items array
-       let id ;
-       if(storedTasksCopy[storedTasksCopy.length-1]){
-           id = storedTasksCopy[storedTasksCopy.length-1].id+1 ;
-       } else {
-           id = 1; 
-       }
+const editTask = (taskId) => {
     
-       const formData = { 
+    const formData = { 
+        id : taskId,
+        name : taskName.value,
+        type : taskType.value,
+        description : taskDescription.value
+    };
+
+    // Update the taskListCopy removing the previous version of task by using its index 
+    for(let i = 0 ; i < storedTasksCopy.length ; i++){    
+        let task = storedTasksCopy[i];
+        if(parseInt(formData.id,10) === parseInt(task.id, 10)){ 
+            // Remove the task from the array which is stored in the browser local storage
+            storedTasksCopy.splice(i, 1);
+        }
+
+    }
+
+    // Remove from the DOM tree the task before recreating it
+    Util.removeElementFromDOM([document.getElementById("TaskNumber"+taskId)]);
+    let newTask = new Task(formData);
+    storedTasksCopy.push(newTask);
+    Util.saveDataToDomStorage("taskList", storedTasksCopy, "local");
+
+    // Display the recreated task into the web page in the relevant section
+    for(let section of sections){
+        if(section.dataset.type === newTask.type){
+            const sectionTitle = document.querySelector("#"+ section.id +" > .section__title");
+            Util.insertAfter(newTask.renderElement(),
+            sectionTitle);
+            location.assign(location.pathname+'#'+section.id);
+        }
+    }
+    
+    // Set the listeners onto the recreated task
+    newTask.setDeletionButton(storedTasksCopy, updateStoredTasksCopy);
+    newTask.setEditionButton(storedTasksCopy, updateStoredTasksCopy);
+    prepareDragAndDrop();
+}
+
+
+const recordTask = () => {
+    // The id is created by incrementing the id number of the last item of the stored items array
+    let id ;
+
+    if(storedTasksCopy.length>0){
+        id = parseInt(storedTasksCopy[storedTasksCopy.length-1].id)+1 ;
+    } else {
+        id = 1; 
+    }
+
+    const formData = { 
         id : id,
         name : taskName.value,
         type : taskType.value,
@@ -87,6 +130,7 @@ const recordTask = () => {
         }
     }
     newTask.setDeletionButton(storedTasksCopy, updateStoredTasksCopy);
+    newTask.setEditionButton(storedTasksCopy, updateStoredTasksCopy);
     prepareDragAndDrop();
 }
 
@@ -135,6 +179,7 @@ const checkFormValidity = () => {
                 section.appendChild(taskToShow.renderElement()
                 );
                 taskToShow.setDeletionButton(storedTasksCopy, updateStoredTasksCopy);
+                taskToShow.setEditionButton(storedTasksCopy, updateStoredTasksCopy);
             }
         }
     }
@@ -146,13 +191,22 @@ checkFormValidity();
 
 /********** LISTENERS ********/
 
-/* New task form listeners */
+/* New task form listeners */   
 taskName.addEventListener("input", checkFormValidity);
+taskName.addEventListener("focus", checkFormValidity);
 taskDescription.addEventListener("input", checkFormValidity);
-newTaskForm.addEventListener("submit",(e)=>{
+taskDescription.addEventListener("focus", checkFormValidity);
+taskType.addEventListener("focus", checkFormValidity);
+
+taskForm.addEventListener("submit",(e)=>{
     e.preventDefault();
     if(checkFormValidity()){
-        recordTask();
+        if(taskForm.taskId.value === ""){
+            recordTask();
+        }
+        else{
+            editTask(parseInt(taskForm.taskId.value, 10));          
+        }
     }
 
 })
