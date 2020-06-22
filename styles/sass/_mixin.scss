@@ -1,0 +1,207 @@
+/* --> RESPONSIVE */
+
+$phone-width: 576px;
+$tablet-width: 768px;
+$laptop-width: 992px;
+$desktop-width: 1200px;
+$large-width: 1920px;
+
+@mixin phone {
+  @media (max-width: #{$phone-width}) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (max-width: #{$tablet-width}) {
+    @content;
+  }
+  /* for iPad Pro */
+  @media only screen and (min-device-width: 1024px) and (max-device-width: 1366px) and (-webkit-min-device-pixel-ratio: 2) and (orientation: portrait) {
+    @content;
+  }
+}
+
+@mixin max-laptop {
+  @media (max-width: #{$laptop-width}) {
+    @content;
+  }
+}
+
+@mixin laptop {
+  @media (min-width: #{$tablet-width}) {
+    @content;
+  }
+}
+
+@mixin max-desktop {
+  @media (max-width: #{$desktop-width}) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: #{$laptop-width}) {
+    @content;
+  }
+}
+
+@mixin max-large {
+  @media (max-width: #{$large-width}) {
+    @content;
+  }
+}
+
+@mixin large {
+  @media (min-width: #{$large-width}) {
+    @content;
+  }
+}
+
+
+/* FONTS */
+
+$defaultFontFamily : Arial ;
+$defaultSize : 1.4rem;
+$defaultLineHeight : 2.2rem;
+$defaultWeight : normal;
+$defaultBgColor: $white;
+$defaultColor: $primary;
+$defaultTextTransform : none;
+$defaultTextAlign : left;
+
+@mixin font($fontFamily: $defaultFontFamily, $size: $defaultSize, $lineHeight: defaultLineHeight, $weight : $defaultWeight, $bgColor : $defaultBgColor, $color : $primary, $textTransform: $defaultTextTransform, $align: $defaultTextAlign){
+	font-family: $fontFamily;
+	font-size: $size;
+	line-height: $lineHeight;
+	font-weight :$weight;
+	background-color: $bgColor;
+	color :$color;
+	text-align: $align;
+	text-transform: $textTransform;	
+}
+
+/* --> CSS3 */
+
+/*** Prefixers  ***/
+
+/*
+RACCOURCIS :
+
+@extend .display-flex ;
+@extend .justify-center ;
+@extend .space-between ;
+@extend .space-around;
+@extend .flex-direct-column ;
+@extend .flex-direct-row ;
+@include display-flex ;
+@include flex-flow ;
+@include align-items($value);
+@include justify-content($value);
+@include flex($value);
+@include flex-basis($value);
+@include transition($args...);
+@include flex-direct-column();
+@include space-between();
+@include space-around();
+@include translate($x, $y);
+@include placeholder-color($color, $opacity);
+
+*/
+
+// Mixins a n'inclure que dans des media-queries
+// Hors d'une media query, privilégier plutôt l'extension des classes ci-dessus
+
+@mixin display-flex {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex
+}
+
+@mixin flex-flow($direction, $wrapType) {
+  -webkit-flex-flow: $direction $wrapType ;
+  -moz-flex-flow: $direction $wrapType ;
+  -ms-flex-flow: $direction $wrapType ;
+  -o-flex-flow: $direction $wrapType ;
+  flex-flow: $direction $wrapType ;
+}
+
+@mixin align-items($value){
+  -webkit-box-align: $value;
+  -moz-flex-align: $value;
+  -ms-flex-align: $value;
+  align-items: $value
+}
+
+@mixin justify-content($value){
+  -webkit-box-pack: $value;
+  -moz-flex-pack: $value;
+  -ms-flex-pack: $value;
+  justify-content: $value
+}
+
+@mixin flex($value){
+  -webkit-box-flex: $value;
+  -ms-flex: $value;
+  flex: $value;
+}
+
+@mixin flex-basis($value){
+  -webkit-box-flex-basis: $value;
+  -moz-flex-basis: $value;
+  -ms-flex-basis: $value;
+  flex-basis: $value;
+}
+
+@mixin transition($args...) {
+  -webkit-transition: $args;
+  -moz-transition: $args;
+  -ms-transition: $args;
+  -o-transition: $args;
+  transition: $args;
+}
+
+@mixin flex-direct-column(){ 
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+@mixin space-between(){ 
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+
+@mixin space-around(){ 
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+}
+
+@mixin translate($x, $y){ 
+  -webkit-transform: translate($x,$y);
+  transform: translate($x,$y);  
+}
+
+@mixin placeholder-color($color, $opacity){
+  ::-webkit-input-placeholder {
+    color: $color;
+    opacity:$opacity;
+  }
+  :-moz-placeholder { /* Firefox 18- */
+    color: $color;  
+    opacity:$opacity;
+  }
+  ::-moz-placeholder {  /* Firefox 19+ */
+    color: $color;
+    opacity:$opacity;
+  }
+  :-ms-input-placeholder {
+    color: $color;
+    opacity:$opacity;
+  }
+}

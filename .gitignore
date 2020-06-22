@@ -1,0 +1,5 @@
+nohup.out
+test/
+*.test
+test.*
+.sass*
