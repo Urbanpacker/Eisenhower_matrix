@@ -41,7 +41,6 @@ const prepareDragAndDrop = async ()=>{
     const taskTodisplay = getDisplayedTasks() ;
     const displayedTasks = await taskTodisplay;
     const droppingCallback = (destination, draggedElem)=>{
-        
         if(draggedElem.dataset.type != destination.dataset.type){
             for(let storedTask of storedTasksCopy){
                 let storedTaskId  = storedTask.id.toString()
@@ -56,7 +55,7 @@ const prepareDragAndDrop = async ()=>{
 };
 
 const recordTask = () => {
-       // The id is created by adding 1 to the id number of the last item of the stored items array
+       // The id is created by incrementing the id number of the last item of the stored items array
        let id ;
        if(storedTasksCopy[storedTasksCopy.length-1]){
            id = storedTasksCopy[storedTasksCopy.length-1].id+1 ;
@@ -86,9 +85,6 @@ const recordTask = () => {
             location.assign(location.pathname+'#'+section.id);
         }
     }
-    //const deletionCallback = ()=>{
-    //    updateStoredTasksCopy();
-    //}
 
     newTask.setDeletionButton(storedTasksCopy, updateStoredTasksCopy);
     prepareDragAndDrop();
@@ -146,7 +142,6 @@ const checkFormValidity = () => {
 
 updateStoredTasksCopy();
 prepareDragAndDrop();
-//prepareDeletionButtons();
 checkFormValidity();
 
 /********** LISTENERS ********/
