@@ -30,6 +30,7 @@ class DndHandler {
         });
 
         destination.addEventListener("drop", (e)=>{
+            e.preventDefault();
             e.currentTarget.classList.remove("dragovered");
             let target = e.currentTarget ;
             let data = e.dataTransfer.getData("text");
