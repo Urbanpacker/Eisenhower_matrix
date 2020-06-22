@@ -1,51 +1,46 @@
 <!doctype html>
 <html lang="fr">
-
-<head>
-  <meta charset="utf-8">
-  <title>Matrice d'Eisenhower</title>
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="styles/stylesheets/normalize.css">
-  <link rel="stylesheet" href="styles/stylesheets/main.css" >
+  <head>
+    <meta charset="utf-8">
+    <title>Matrice d'Eisenhower</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="styles/stylesheets/normalize.css">
+    <link rel="stylesheet" href="styles/stylesheets/main.css" >
   </head>
-
-<body>
-  <div class="app">
-    <div class="sectionList">
-      <div class="section important_urgent" id="important_urgent_section" data-type="important_urgent">
-        <p class ="section__title">Important et urgent</p>
+  <body>
+    <noscript>
+      <h2>L'application Matrice d'Eisenhower utilise Javascript (ES6), merci d'activer Javascript sur votre navigateur afin de l'utiliser.</h2>    
+    </noscript>
+    <div class="app">
+      <div class="sectionList">
+        <div class="section important_urgent" id="important_urgent_section" data-type="important_urgent">
+          <p class ="section__title">Important et urgent</p>
+        </div>
+        <div class="section important_non_urgent" id="important_non_urgent_section" data-type="important_non_urgent">
+          <p class ="section__title">Important et non urgent</p>
+        </div>
+        <div class="section non_important_urgent" id="non_important_urgent_section" data-type="non_important_urgent">
+          <p class ="section__title">Non important et urgent</p>
+        </div>
+        <div class="section non_important_non_urgent" id="non_important_non_urgent_section" data-type="non_important_non_urgent">
+          <p class ="section__title">Non important et non urgent</p>
+        </div>
       </div>
-      <div class="section important_non_urgent" id="important_non_urgent_section" data-type="important_non_urgent">
-        <p class ="section__title">Important et non urgent</p>
-      </div>
-      <div class="section non_important_urgent" id="non_important_urgent_section" data-type="non_important_urgent">
-        <p class ="section__title">Non important et urgent</p>
-      </div>
-      <div class="section non_important_non_urgent" id="non_important_non_urgent_section" data-type="non_important_non_urgent">
-        <p class ="section__title">Non important et non urgent</p>
-      </div>
+      <form id="newTaskForm" class="form" action="#" method="post">
+        <label for="taskNameInput" class="label requiredLabel">Nom de la tâche :</label>
+        <input class="field" type="text" id="taskNameInput" name="taskName" placeholder="Nom de la tâche" required>
+        <label for="taskTypeInput" class="label requiredLabel">Type :</label>
+        <select class="field" id="taskTypeInput" name="taskType" required>
+          <option value="important_urgent">Important - Urgent</option>
+          <option value="non_important_urgent">Non important - Urgent</option>
+          <option value="important_non_urgent">Important - Non urgent</option>
+          <option value="non_important_non_urgent">Non important - Non Urgent</option>
+        </select>
+          <label for="taskDescriptionInput" class="label requiredLabel">Message :</label>
+          <textarea class="field" id="taskDescriptionInput" name="taskDescription" placeholder="Description de la tâche" style="height:200px" required></textarea>
+        <button class="submitButton" id="submitButton" type="submit">Créer une nouvelle tâche</button>
+      </form>
     </div>
-    <form id="newTaskForm" class="form" action="#" method="post">
-      <label for="taskNameInput" class="label requiredLabel">Nom de la tâche :</label>
-      <input class="field" type="text" id="taskNameInput" name="taskName" placeholder="Nom de la tâche" required>
-      <label for="taskTypeInput" class="label requiredLabel">Type :</label>
-      <select class="field" id="taskTypeInput" name="taskType" required>
-        <option value="important_urgent">Important - Urgent</option>
-        <option value="non_important_urgent">Non important - Urgent</option>
-        <option value="important_non_urgent">Important - Non urgent</option>
-        <option value="non_important_non_urgent">Non important - Non Urgent</option>
-      </select>
-        <label for="taskDescriptionInput" class="label requiredLabel">Message :</label>
-        <textarea class="field" id="taskDescriptionInput" name="taskDescription" placeholder="Description de la tâche" style="height:200px" required></textarea>
-      <button class="submitButton" id="submitButton" type="submit">Créer une nouvelle tâche</button>
-    </form>
-  </div>
-
-  <script type="module" src="js/index.js"></script>
-
-</body>
-
-
-
+  </body>
 </html>
