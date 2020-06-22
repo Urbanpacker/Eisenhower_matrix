@@ -51,7 +51,9 @@ const prepareDragAndDrop = async ()=>{
             }
         }
     } ;
-    DndHandler.setListeners(displayedTasks, sections, droppingCallback);
+    let destinationSections = sections ;
+    /* The DndHandler.setListeners static method apply a draggable attribute and an onDrag listener to the DOM elements contained in the first argument (that must be a Collection), an onDrop listener to the DOM elements contained in the second argument (a Collection to), and indicates to callback function that must be triggered everytime a dropEvent happens */
+    DndHandler.setListeners(displayedTasks, destinationSections, droppingCallback);
 };
 
 const recordTask = () => {
@@ -85,7 +87,6 @@ const recordTask = () => {
             location.assign(location.pathname+'#'+section.id);
         }
     }
-
     newTask.setDeletionButton(storedTasksCopy, updateStoredTasksCopy);
     prepareDragAndDrop();
 }
