@@ -20,10 +20,98 @@ const storedTasksCopy = Util.loadDataFromDomStorage("taskList", "local") || [];
 const taskForm = document.getElementById("taskForm");
 const taskName = document.getElementById("taskNameInput");
 const taskType = document.getElementById("taskTypeInput");
+const taskId = document.getElementById("taskId");
 const taskDescription = document.getElementById("taskDescriptionInput");
 const submitButton = document.getElementById("submitButton");
 
 /***********************FUNCTIONS ***********************/
+
+const resetForm = () =>{
+    taskId.value = "" ;
+    taskName.value = "" ;
+    taskType.value = "important_urgent";
+    taskDescription.value = "";
+    taskForm.submitButton.textContent = "Créer la tâche";
+    let cancelEdition = document.getElementById("cancelEdition");
+    if(cancelEdition !== null){
+        cancelEdition.remove();
+    }
+    
+}
+
+const setTaskButtons = (button) =>{
+    const taskButtons = document.querySelectorAll("#"+button.id + " [data-elem-type]");
+    for(let taskButton of taskButtons){
+        taskButton.addEventListener("click", (e)=> {
+            e.preventDefault();
+            
+            let targetedTaskId = e.currentTarget.dataset.taskId;
+            
+            // If the deleteButton has been clicked
+            if(e.currentTarget.dataset.elemType==="deleteButton"){
+                // Update the taskListCopy removing the current task by using its index 
+                for(let i = 0 ; i < storedTasksCopy.length ; i++){    
+                    let task = storedTasksCopy[i];
+                    if(parseInt(targetedTaskId, 10) === task.id){ 
+                        // Remove the task from the array which is stored in the browser local storage
+                        storedTasksCopy.splice(i, 1);
+                    }
+                }
+                // Remove from the DOM tree the task which corresponds to the deletion button that has been clicked
+                Util.removeElementFromDOM([document.getElementById("TaskNumber"+targetedTaskId)]);                
+            }
+            // If the editButton has been clicked
+            else if(e.currentTarget.dataset.elemType === "editButton"){
+                let currentTarget = e.currentTarget ;   
+                for(let i = 0 ; i < storedTasksCopy.length ; i++){    
+                    let task = storedTasksCopy[i];
+                    if(parseInt(currentTarget.dataset.taskId,10) === task.id){ 
+                        taskForm.taskId.value = task.id ;
+                        taskForm.taskNameInput.value = task.name;
+                        taskForm.taskDescriptionInput.value = task.description;
+                        taskForm.taskTypeInput.value = task.type;
+                        taskForm.taskNameInput.focus();
+                    }
+                }
+                taskForm.submitButton.textContent = "Modifier la tâche";
+                
+                let cancelEdition = document.getElementById("cancelEdition");
+                if(cancelEdition === null){
+                    cancelEdition = document.createElement("button");
+                    cancelEdition.id = "cancelEdition";
+                    cancelEdition.textContent = "Annuler la modification";        
+                    cancelEdition.classList.add("formButtons__button", "formButtons__button--cancel");
+                    Util.insertAfter(cancelEdition, taskForm.submitButton);
+                    cancelEdition.addEventListener("click", (event)=> {
+                        event.preventDefault();
+                        resetForm();
+                    });
+                }
+            }
+            updateStoredTasksCopy();
+        });
+    }
+    prepareDragAndDrop();
+} ;
+
+
+/* Take the task list from an array then put it into the DOM */
+const displayTasks = (taskList) => {
+    // Display the new task into the web page in the relevant section
+    for(let task of taskList){
+        for(let section of sections){
+            if(section.dataset.type === task.type){
+                let taskToShow = task ;
+                if(!(taskToShow instanceof Task)){
+                    taskToShow = new Task(task);
+                }
+                const HTMLTaskElement = taskToShow.renderElement() ;
+                section.appendChild(HTMLTaskElement);
+                setTaskButtons(HTMLTaskElement);
+            }
+        }
+    }
+}
 
 const updateStoredTasksCopy = ()=>  {  
     // Set the updated array of tasks into the browser's local storage 
@@ -40,20 +128,20 @@ const prepareDragAndDrop = async ()=>{
             e.dataTransfer.effectAllowed = "move";
             e.dataTransfer.setData("text", e.target.getAttribute("id"));
         });
-        section.addEventListener("dragover", (ev)=>{
-            ev.preventDefault();
-            ev.dataTransfer.dropEffect = "move";
-            ev.currentTarget.classList.add("dragovered");
+        section.addEventListener("dragover", (e)=>{
+            e.preventDefault();
+            e.dataTransfer.dropEffect = "move";
+            e.currentTarget.classList.add("dragovered");
         });
-        section.addEventListener("dragleave", (ev)=>{
-            ev.preventDefault();
-            ev.currentTarget.classList.remove("dragovered");
+        section.addEventListener("dragleave", (e)=>{
+            e.preventDefault();
+            e.currentTarget.classList.remove("dragovered");
         });
-        section.addEventListener("drop", (ev)=>{
-            ev.preventDefault();
-            const target = ev.currentTarget ;
+        section.addEventListener("drop", (e)=>{
+            e.preventDefault();
+            const target = e.currentTarget ;
             target.classList.remove("dragovered");
-            const data = ev.dataTransfer.getData("text");
+            const data = e.dataTransfer.getData("text");
             const draggedElement = document.getElementById(data) ;
             const clonedElement = draggedElement.parentNode.removeChild(draggedElement);
             target.appendChild(clonedElement);    
@@ -70,13 +158,15 @@ const prepareDragAndDrop = async ()=>{
     }
 }
 
-const editTask = (taskId) => {
+const editTask = () => {
     const formData = { 
-        id : taskId,
+        id : parseInt(taskId.value, 10),
         name : taskName.value,
         type : taskType.value,
         description : taskDescription.value
     };
+
+    resetForm();
 
     // Update the taskListCopy removing the previous version of task by using its index 
     for(let i = 0 ; i < storedTasksCopy.length ; i++){    
@@ -88,25 +178,13 @@ const editTask = (taskId) => {
     }
 
     // Remove from the DOM tree the task before recreating it
-    Util.removeElementFromDOM([document.getElementById("TaskNumber"+taskId)]);
+    Util.removeElementFromDOM([document.getElementById("TaskNumber"+formData.id)]);
     let newTask = new Task(formData);
     storedTasksCopy.push(newTask);
     Util.saveDataToDomStorage("taskList", storedTasksCopy, "local");
 
-    // Display the recreated task into the web page in the relevant section
-    for(let section of sections){
-        if(section.dataset.type === newTask.type){
-            const sectionTitle = document.querySelector("#"+ section.id +" > .section__title");
-            Util.insertAfter(newTask.renderElement(),
-            sectionTitle);
-            location.assign(location.pathname);
-        }
-    }
-    
-    // Set the listeners onto the recreated task
-    newTask.setDeletionButton(storedTasksCopy, updateStoredTasksCopy);
-    newTask.setEditionButton(storedTasksCopy, updateStoredTasksCopy);
-    prepareDragAndDrop();
+    // Display the modified task into the web page in the relevant section
+    displayTasks([newTask]);
 }
 
 
@@ -127,23 +205,14 @@ const recordTask = () => {
         description : taskDescription.value
     };
 
+    resetForm();
+
     let newTask = new Task(formData);
-        
     storedTasksCopy.push(newTask);
     Util.saveDataToDomStorage("taskList", storedTasksCopy, "local");
 
     // Display the new task into the web page in the relevant section
-    for(let section of sections){
-        if(section.dataset.type === newTask.type){
-            const sectionTitle = document.querySelector("#"+ section.id +" > .section__title");
-            Util.insertAfter(newTask.renderElement(),
-            sectionTitle);
-            location.assign(location.pathname+'#'+section.id);
-        }
-    }
-    newTask.setDeletionButton(storedTasksCopy, updateStoredTasksCopy);
-    newTask.setEditionButton(storedTasksCopy, updateStoredTasksCopy);
-    prepareDragAndDrop();
+    displayTasks([newTask]);
 }
 
 const checkFormValidity = () => {
@@ -182,42 +251,30 @@ const checkFormValidity = () => {
     } 
 })();
 
-/* Generate the task list from the DOM storage, put it into the DOM to display it on the page */
-(()=>{
-    for(let task of storedTasksCopy){
-        for(let section of sections){
-            if(section.dataset.type === task.type){
-                const taskToShow = new Task(task);
-                section.appendChild(taskToShow.renderElement()
-                );
-                taskToShow.setDeletionButton(storedTasksCopy, updateStoredTasksCopy);
-                taskToShow.setEditionButton(storedTasksCopy, updateStoredTasksCopy);
-            }
-        }
-    }
-})();
-
+displayTasks(storedTasksCopy);
 updateStoredTasksCopy();
 prepareDragAndDrop();
 checkFormValidity();
 
 /********** LISTENERS ********/
 
-/* New task form listeners */   
-taskName.addEventListener("input", checkFormValidity);
-taskName.addEventListener("focus", checkFormValidity);
-taskDescription.addEventListener("input", checkFormValidity);
-taskDescription.addEventListener("focus", checkFormValidity);
-taskType.addEventListener("focus", checkFormValidity);
+/* New task form listeners */
+
+const formFields = [taskName, taskDescription];
+
+for(let formField of formFields){
+    formField.addEventListener("input", checkFormValidity);
+    formField.addEventListener("focus", checkFormValidity);
+}
 
 taskForm.addEventListener("submit",(e)=>{
     e.preventDefault();
     if(checkFormValidity()){
-        if(taskForm.taskId.value === ""){
+        if(taskId.value === ""){
             recordTask();
         }
         else{
-            editTask(parseInt(taskForm.taskId.value, 10));          
+            editTask();          
         }
     }
 
