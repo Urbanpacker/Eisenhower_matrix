@@ -32,7 +32,7 @@ const updateStoredTasksCopy = ()=> {
     if(storedTasksCopy.length > 0){
         Util.saveDataToDomStorage("taskList", storedTasksCopy, "local");
     }
-
+    prepareDragAndDrop();
 };
 
 /* Drag and drop */

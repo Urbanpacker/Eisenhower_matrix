@@ -56,9 +56,28 @@ class Task{
                     taskForm.taskNameInput.value = task.name;
                     taskForm.taskDescriptionInput.value = task.description;
                     taskForm.taskTypeInput.value = task.type;
-                    taskForm.submitButton.textContent = "Modifier la tâche";
-                    
-                }
+                    }
+            }
+            taskForm.submitButton.textContent = "Modifier la tâche";
+            
+            var cancelEditionPresent = document.getElementById("cancelEdition") ? true : false ; 
+            let cancelEdition ;
+            
+            if(!cancelEditionPresent){
+                cancelEdition = document.createElement("button");
+                cancelEdition.id = "cancelEdition";
+                cancelEdition.textContent = "Annuler la modification";        
+                cancelEdition.classList.add("formButtons__button", "formButtons__button--cancel");
+                Util.insertAfter(cancelEdition, taskForm.submitButton);
+                
+                cancelEdition.addEventListener("click", (e)=> {
+                    e.preventDefault();
+                    taskForm.taskId.value = "" ;
+                    taskForm.taskNameInput.value = "";
+                    taskForm.taskDescriptionInput.value = "";
+                    taskForm.submitButton.textContent = "Créer la tâche";
+                    cancelEdition.remove();
+                });
             }
             editionCallback();
         });
@@ -108,6 +127,7 @@ class Task{
         task.appendChild(nameElement);
         task.appendChild(description);
         task.appendChild(buttons);
+
         
         return task ;
     }

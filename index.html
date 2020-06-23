@@ -10,7 +10,7 @@
   </head>
   <body>
     <noscript>
-      <h2>L'application Matrice d'Eisenhower utilise Javascript (ES6), merci d'activer Javascript sur votre navigateur afin de l'utiliser.</h2>    
+      <p>L'application Matrice d'Eisenhower utilise Javascript (ES6), merci d'activer Javascript sur votre navigateur afin de l'utiliser.</p>    
     </noscript>
     <div class="app">
       <div class="sectionList">
@@ -40,7 +40,9 @@
         </select>
         <label for="taskDescriptionInput" class="label requiredLabel">Message :</label>
         <textarea class="field" id="taskDescriptionInput" name="taskDescription" placeholder="Description de la tâche" style="height:200px" required></textarea>
-        <button class="submitButton" id="submitButton" type="submit">Créer une nouvelle tâche</button>
+        <div id="formButtons" class="formButtons">
+          <button class="formButtons__button formButtons__button--submit" id="submitButton" type="submit">Créer une nouvelle tâche</button>
+        </div>
       </form>
     </div>
     <script type ="module" src="js/index.js"></script>
