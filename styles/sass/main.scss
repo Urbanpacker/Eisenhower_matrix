@@ -8,8 +8,8 @@ $white: white;
 $primary : black;
 $validColor : #4CAF50 ;
 $fontsize : 2rem;
-$disabled : rgba(255,0,0,0.4);
-
+$disabled-color : rgba(255,0,0,0.4);
+$cancel-color : rgba(255,0,0,0.7);
 
 @import "./_mixin.scss" ;
 
@@ -23,19 +23,22 @@ html{
 }
 
 .app{
-  margin : auto;
-  max-width : 80%;
+  margin : 20px;
   font-size: 1.6rem;;
+  @include desktop{
+    margin : auto;
+    max-width: 80%;
+  }
 }
 
 .sectionList{
+  display : flex;
+  flex-flow : column nowrap ;
+  max-width : 100%;
+  margin: auto;
   @include laptop{
     flex-flow : row wrap ;
   }
-  display : flex;
-  flex-flow : column nowrap ;
-  width : 100%;
-  margin: auto;
 }
 
 .section{
@@ -71,13 +74,16 @@ html{
       padding: 0 0.5rem;
       margin : 0.75rem 0;
       border-radius: 10px;
-      &__deleteButton{
+      &__buttons{
         cursor : pointer;
-        margin: 1rem 5% 1rem auto ;
-        display: block;
-        & > img {
-          width: $fontsize;
-          height: $fontsize;
+        align-self: center;
+        margin : auto 0 auto auto ; 
+        & > a{
+          margin: 1rem ;
+          & > img {
+            width: $fontsize;
+            height: $fontsize;
+          }
         }
       }
       &__taskName{
@@ -127,20 +133,44 @@ html{
   display: inline-block;
 }
 
-/* Style the submit button */
-.submitButton{
-  background-color: $validColor;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  margin : 6px auto 0;
-  padding: 12px 20px;
-  cursor: pointer;
+.formButtons{
+  display: flex;
+  justify-content: space-around;
+  flex-flow: column wrap;
+  @include desktop{
+    flex-flow: row nowrap;
+  }
+  &__button{
+    @include desktop{
+      //width: 80%;
+      margin : 6px auto 0;
+      flex-basis: 45%;
+    }
+    width: 100%;
+    border: none;
+    border-radius: 4px;
+    margin : 6px auto 0;
+    padding: 12px 20px;
+    color: white;
+    cursor: pointer;
+    /* Style the submit button */
+    &--submit{
+      background-color: $validColor;
+      &.disabled{
+        cursor: not-allowed;
+        background-color: $disabled-color;
+      }
+    }
+    /*Style the cancel button*/
+    &--cancel{
+      background-color: $cancel-color;
+    }
+    
+  }
 }
-.disabled{
-    cursor: not-allowed;
-    background-color: $disabled;
-}
+
+
+
 
 /* Style the container */
 .form {
@@ -163,11 +193,10 @@ html{
   width: 75%;
   margin : 6px auto 0;
 }
-.label, .field, .submitButton {
-  width : 80%;
-  
-  @include desktop{
+.label, .field, .formButton__button{
     width: 100%;
     margin : 6px auto 0;
-  }
+    @include desktop{
+      width: 80%;
+    }
 }

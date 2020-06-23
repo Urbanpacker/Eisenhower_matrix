@@ -5,8 +5,9 @@ class Task{
         this.setType(type);
         this.setDescription(description);
         this.deleteButton = null;
+        this.editButton = null;
     }
-    
+
     setId(id){
         this.id = id ;
     }
@@ -23,33 +24,13 @@ class Task{
         this.description = description ;
     }
 
-    setDeletionButton(storedTasksCopy, deletionCallback){
-        this.deleteButton.addEventListener("click", (e)=> {
-            e.preventDefault();
-            let currentTarget = e.currentTarget ;
-            // Update the taskListCopy removing the current task
-            for(let task of storedTasksCopy){            
-                if(currentTarget.dataset.taskId.toString() === task.id.toString()){ 
-                    for(let i = 0 ; i < storedTasksCopy.length ; i++){
-                        // Remove the task from the array which is stored in the browser local storage
-                        if(storedTasksCopy[i].id == task.id){
-                        storedTasksCopy.splice(i, 1);
-                        }
-                    }
-                }
-            }
-            // Remove from the DOM tree the task which corresponds to the deletion button that has been clicked
-            Util.removeElementFromDOM([currentTarget.parentNode]);
-            deletionCallback(currentTarget);
-        });
-    }
-
     renderElement(){
         let task = document.createElement("div");
         task.id = "TaskNumber" +this.id;
         task.dataset.id = this.id;
         task.dataset.type = this.type ;
         task.classList.add("section__singleTask");
+        task.setAttribute("draggable", "true");
 
         const nameElement = document.createElement("p");
         nameElement.appendChild(document.createTextNode(this.name));
@@ -61,19 +42,38 @@ class Task{
 
         const deleteButton = document.createElement("a");
         const deleteButtonImg = document.createElement("img");
-        deleteButtonImg.setAttribute("src", "./images/deleteButton.png");
-        deleteButtonImg.dataset.credits = "This image is published under the Creative Commons Public Domain 1.0, the original image can be found on the website Free SVG : https://freesvg.org/img/TzeenieWheenie_red_green_OK_not_OK_Icons_1.png . Many thanks to them." ;
+        deleteButtonImg.setAttribute("src", "./images/deleteButton.svg");
+        deleteButtonImg.dataset.credits = "This image is published under the Creative Commons Public Domain 1.0, the original image can be found on the website Free SVG : https://freesvg.org/red-cross-not-ok-vector-icon . Many thanks to them." ;
         deleteButtonImg.setAttribute("alt", "Supprimer cette tâche");
-        deleteButton.appendChild(deleteButtonImg);
         deleteButton.setAttribute("href", "#");
-        deleteButton.classList.add("section__singleTask__deleteButton");
         deleteButton.dataset.taskId = this.id;
+        deleteButton.dataset.elemType = "deleteButton";
+        deleteButton.id = "deleteTask"+this.id;
+        deleteButton.appendChild(deleteButtonImg);
         this.deleteButton = deleteButton ;
+
+        const editButton = document.createElement("a");
+        const editButtonImg = document.createElement("img");
+        editButtonImg.setAttribute("src", "./images/editButton.svg");
+        editButtonImg.dataset.credits = "This image is published under the Creative Commons Public Domain 1.0, the original image can be found on the website Free SVG : https://freesvg.org/hb-pencil-vector-image . Many thanks to them." ;
+        editButtonImg.setAttribute("alt", "Modifier cette tâche");
+        editButton.setAttribute("href", "#");
+        editButton.dataset.taskId = this.id;
+        editButton.dataset.elemType = "editButton";
+        editButton.id = "editTask"+this.id;
+        editButton.appendChild(editButtonImg);
+        this.editButton = editButton ;
+
+        const buttons = document.createElement("div");
+        buttons.classList.add("section__singleTask__buttons");
+
+        buttons.appendChild(editButton);
+        buttons.appendChild(deleteButton);
 
         task.appendChild(nameElement);
         task.appendChild(description);
-        task.appendChild(deleteButton);
-        
+        task.appendChild(buttons);
+
         return task ;
     }
 

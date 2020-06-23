@@ -10,7 +10,7 @@
   </head>
   <body>
     <noscript>
-      <h2>L'application Matrice d'Eisenhower utilise Javascript (ES6), merci d'activer Javascript sur votre navigateur afin de l'utiliser.</h2>    
+      <p>L'application Matrice d'Eisenhower utilise Javascript (ES6), merci d'activer Javascript sur votre navigateur afin de l'utiliser.</p>    
     </noscript>
     <div class="app">
       <div class="sectionList">
@@ -27,24 +27,26 @@
           <p class ="section__title">Non important et non urgent</p>
         </div>
       </div>
-      <form id="newTaskForm" class="form" action="#" method="post">
+      <form id="taskForm" class="form" action="#" method="post">
+        <input id="taskId" type="hidden" value="">
         <label for="taskNameInput" class="label requiredLabel">Nom de la tâche :</label>
         <input class="field" type="text" id="taskNameInput" name="taskName" placeholder="Nom de la tâche" required>
         <label for="taskTypeInput" class="label requiredLabel">Type :</label>
         <select class="field" id="taskTypeInput" name="taskType" required>
           <option value="important_urgent">Important - Urgent</option>
-          <option value="non_important_urgent">Non important - Urgent</option>
           <option value="important_non_urgent">Important - Non urgent</option>
+          <option value="non_important_urgent">Non important - Urgent</option>
           <option value="non_important_non_urgent">Non important - Non Urgent</option>
         </select>
-          <label for="taskDescriptionInput" class="label requiredLabel">Message :</label>
-          <textarea class="field" id="taskDescriptionInput" name="taskDescription" placeholder="Description de la tâche" style="height:200px" required></textarea>
-        <button class="submitButton" id="submitButton" type="submit">Créer une nouvelle tâche</button>
+        <label for="taskDescriptionInput" class="label requiredLabel">Message :</label>
+        <textarea class="field" id="taskDescriptionInput" name="taskDescription" placeholder="Description de la tâche" style="height:200px" required></textarea>
+        <div id="formButtons" class="formButtons">
+          <button class="formButtons__button formButtons__button--submit" id="submitButton" type="submit">Créer une nouvelle tâche</button>
+        </div>
       </form>
     </div>
     <script src="js/utilities.js"></script>
     <script src="js/task.js"></script>
-    <script src="js/dndHandler.js"></script>
     <script src="js/index.js"></script>
 </body>
 </html>
