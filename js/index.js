@@ -173,10 +173,10 @@ const checkFormValidity = () => {
 /* Set the background color to the type options in the form with the relevant section colors */
 (()=>{
     const typeList = document.querySelectorAll("#taskTypeInput option");
-    for(let i = 0, c = sections.length ; i < c ; i++){
-       for(let j = 0, d = typeList.length ; j < d ; j++){
-            if(i===j){
-                typeList[j].style.backgroundColor = window.getComputedStyle(sections[i]).backgroundColor;
+    for(let section of sections){
+       for(let typeOption of typeList){
+            if(section.id === typeOption.value+"_section"){
+                typeOption.style.backgroundColor = window.getComputedStyle(section).backgroundColor;
             }   
         }
     } 
