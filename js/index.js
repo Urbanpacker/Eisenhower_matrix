@@ -2,7 +2,6 @@
 
 import {Util} from "./utilities.js";
 import {Task} from "./task.js";
-import {DndHandler} from "./dndHandler.js";
 
 /*********************DATA *************************/
 
@@ -14,6 +13,7 @@ const non_important_non_urgent = document.getElementById("non_important_non_urge
 const sections = [important_urgent, non_important_urgent, important_non_urgent, non_important_non_urgent];
 
 /**** Stored tasks list ****/
+
 const storedTasksCopy = Util.loadDataFromDomStorage("taskList", "local") || [];
 
 /*** Form fields ****/
@@ -25,39 +25,52 @@ const submitButton = document.getElementById("submitButton");
 
 /***********************FUNCTIONS ***********************/
 
-const updateStoredTasksCopy = ()=> {
-
+const updateStoredTasksCopy = ()=>  {  
     // Set the updated array of tasks into the browser's local storage 
     Util.removeDataFromDomStorage("taskList", "local");
     if(storedTasksCopy.length > 0){
         Util.saveDataToDomStorage("taskList", storedTasksCopy, "local");
     }
-    prepareDragAndDrop();
 };
 
 /* Drag and drop */
 const prepareDragAndDrop = async ()=>{
-    let getDisplayedTasks = () => {return document.getElementsByClassName("section__singleTask")};
-    const taskTodisplay = getDisplayedTasks() ;
-    const displayedTasks = await taskTodisplay;
-    const droppingCallback = (destination, draggedElem)=>{
-        if(draggedElem.dataset.type != destination.dataset.type){
-            for(let storedTask of storedTasksCopy){
-                let storedTaskId = storedTask.id.toString() ;
-                if(storedTaskId === draggedElem.dataset.id){
-                    storedTask.type = destination.dataset.type ;
-                    updateStoredTasksCopy();
+   for(let section of sections){
+        section.addEventListener("dragstart", (e) => {
+            e.dataTransfer.effectAllowed = "move";
+            e.dataTransfer.setData("text", e.target.getAttribute("id"));
+        });
+        section.addEventListener("dragover", (ev)=>{
+            ev.preventDefault();
+            ev.dataTransfer.dropEffect = "move";
+            ev.currentTarget.classList.add("dragovered");
+        });
+        section.addEventListener("dragleave", (ev)=>{
+            ev.preventDefault();
+            ev.currentTarget.classList.remove("dragovered");
+        });
+        section.addEventListener("drop", (ev)=>{
+            ev.preventDefault();
+            const target = ev.currentTarget ;
+            target.classList.remove("dragovered");
+            const data = ev.dataTransfer.getData("text");
+            const draggedElement = document.getElementById(data) ;
+            const clonedElement = draggedElement.parentNode.removeChild(draggedElement);
+            target.appendChild(clonedElement);    
+            if(draggedElement.dataset.type != target.dataset.type){
+                for(let storedTask of storedTasksCopy){
+                    let storedTaskId = storedTask.id.toString() ;
+                    if(storedTaskId === draggedElement.dataset.id){
+                        storedTask.type = target.dataset.type ;
+                        updateStoredTasksCopy();
+                    }
                 }
             }
-        }
-    } ;
-    let destinationSections = sections ;
-    /* The DndHandler.setListeners static method apply a draggable attribute and an onDrag listener to the DOM elements contained in the first argument (that must be a Collection), an onDrop listener to the DOM elements contained in the second argument (a Collection to), and indicates to callback function that must be triggered everytime a dropEvent happens */
-    DndHandler.setListeners(displayedTasks, destinationSections, droppingCallback);
-};
+        });
+    }
+}
 
 const editTask = (taskId) => {
-    
     const formData = { 
         id : taskId,
         name : taskName.value,
@@ -72,7 +85,6 @@ const editTask = (taskId) => {
             // Remove the task from the array which is stored in the browser local storage
             storedTasksCopy.splice(i, 1);
         }
-
     }
 
     // Remove from the DOM tree the task before recreating it
@@ -87,7 +99,7 @@ const editTask = (taskId) => {
             const sectionTitle = document.querySelector("#"+ section.id +" > .section__title");
             Util.insertAfter(newTask.renderElement(),
             sectionTitle);
-            location.assign(location.pathname+'#'+section.id);
+            location.assign(location.pathname);
         }
     }
     

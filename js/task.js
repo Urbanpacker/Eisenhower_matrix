@@ -9,7 +9,7 @@ class Task{
         this.deleteButton = null;
         this.editButton = null;
     }
-    
+
     setId(id){
         this.id = id ;
     }
@@ -70,8 +70,8 @@ class Task{
                 cancelEdition.classList.add("formButtons__button", "formButtons__button--cancel");
                 Util.insertAfter(cancelEdition, taskForm.submitButton);
                 
-                cancelEdition.addEventListener("click", (e)=> {
-                    e.preventDefault();
+                cancelEdition.addEventListener("click", (event)=> {
+                    event.preventDefault();
                     taskForm.taskId.value = "" ;
                     taskForm.taskNameInput.value = "";
                     taskForm.taskDescriptionInput.value = "";
@@ -89,6 +89,7 @@ class Task{
         task.dataset.id = this.id;
         task.dataset.type = this.type ;
         task.classList.add("section__singleTask");
+        task.setAttribute("draggable", "true");
 
         const nameElement = document.createElement("p");
         nameElement.appendChild(document.createTextNode(this.name));
@@ -128,7 +129,6 @@ class Task{
         task.appendChild(description);
         task.appendChild(buttons);
 
-        
         return task ;
     }
 
